@@ -20,21 +20,16 @@ package main
 import (
 	_ "embed"
 
-	mongoclient "github.com/dvaumoron/puzzlemongoclient"
+	galleryimpl "github.com/dvaumoron/puzzlegalleryserver/gallery/service/impl"
+	gallerywidget "github.com/dvaumoron/puzzlegalleryserver/gallery/widget"
 	widgetserver "github.com/dvaumoron/puzzlewidgetserver"
-	pb "github.com/dvaumoron/puzzlewidgetservice"
 )
 
 //go:embed version.txt
 var version string
 
 func main() {
-	s := widgetserver.Make("", version)
-	clientOptions, databaseName := mongoclient.Create()
-	g := s.CreateWidget("gallery")
-	g.AddAction("view", pb.MethodKind_GET, "/", func(d widgetserver.Data) (string, string, []byte, error) {
-		return "", "", nil, nil
-	})
-
+	s := widgetserver.Make(gallerywidget.GalleryKey, version)
+	gallerywidget.InitWidget(s, galleryimpl.New())
 	s.Start()
 }
