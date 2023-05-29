@@ -64,12 +64,8 @@ github.com/dvaumoron/puzzlemongoclient v1.4.0 h1:TYXcm+Jn3/mG+yzRfT52TzAtSu0TLbD
 github.com/dvaumoron/puzzlemongoclient v1.4.0/go.mod h1:j4ybZYI9/3147tIvEn+5HkM9hNhFNLXdAgRYI1HE+h8=
 github.com/dvaumoron/puzzletelemetry v1.1.0 h1:1KMOKBadHZ1vShpaXzF0fuP8B8GCm/jI2VFU3hELuys=
 github.com/dvaumoron/puzzletelemetry v1.1.0/go.mod h1:OKAkWUV8OiGm04oNhhZ32yPTp4qoTVqx4lYA5AJR78A=
-github.com/dvaumoron/puzzlewidgetserver v1.1.2 h1:8hcmB89NzRmvyB5/iHxcAfMuEJd6X8iV7rXGIfsEqzw=
-github.com/dvaumoron/puzzlewidgetserver v1.1.2/go.mod h1:WhpeBPgjZ4N67Q7Q1OBifWilvSNwAK5tc5TETnd5Zns=
 github.com/dvaumoron/puzzlewidgetserver v1.2.0 h1:M4ZnqSXM3Yf1dS+/6eyC+bJiwmMkekYOhjNTtf2Z96s=
 github.com/dvaumoron/puzzlewidgetserver v1.2.0/go.mod h1:GV5Li0ovheEKLN3r4g8KEmV4e3Q1y6QQejvOGTEdXdo=
-github.com/dvaumoron/puzzlewidgetservice v1.0.2 h1:agmtMYy4tgBVLB44UQdfp0LupguqQnmnJR9NjlKs3Ug=
-github.com/dvaumoron/puzzlewidgetservice v1.0.2/go.mod h1:4SoELSrFGpUQOU1tnLa0wn+uoom19ZfBIrPZBQyr5dY=
 github.com/dvaumoron/puzzlewidgetservice v1.1.0 h1:qd5OPsfgK2N2+oAV9pcZdzv0ps2dvGHXWDAz+4MsXLo=
 github.com/dvaumoron/puzzlewidgetservice v1.1.0/go.mod h1:4SoELSrFGpUQOU1tnLa0wn+uoom19ZfBIrPZBQyr5dY=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
