@@ -119,7 +119,7 @@ func (i galleryImpl) GetImageData(logger otelzap.LoggerWithCtx, imageId uint64) 
 	return image, nil
 }
 
-func (i galleryImpl) UpdateImage(logger otelzap.LoggerWithCtx, info service.GalleryImage, data []byte) (uint64, error) {
+func (i galleryImpl) UpdateImage(logger otelzap.LoggerWithCtx, galleryId uint64, info service.GalleryImage, data []byte) (uint64, error) {
 	// TODO
 	return 0, nil
 }

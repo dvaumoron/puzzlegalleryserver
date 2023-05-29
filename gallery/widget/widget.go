@@ -38,7 +38,10 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 	w.AddAction("view", pb.MethodKind_GET, "/", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
 
-		galleryId := data["objectId"]
+		galleryId, err := widgetserver.AsUint64(data["objectId"])
+		if err != nil {
+			return "", "", nil, err
+		}
 
 		total, images, err := service.GetImages(ctxLogger, galleryId, 0, 0)
 		if err != nil {
@@ -57,7 +60,10 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 	})
 	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId := data["pathData/ImageId"]
+		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		if err != nil {
+			return "", "", nil, err
+		}
 
 		image, err := service.GetImageData(ctxLogger, imageId)
 		if err != nil {
@@ -67,7 +73,10 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 	})
 	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId := data["pathData/ImageId"]
+		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		if err != nil {
+			return "", "", nil, err
+		}
 
 		image, err := service.GetImage(ctxLogger, imageId)
 		if err != nil {
@@ -84,22 +93,28 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 	})
 	w.AddAction("save", pb.MethodKind_POST, "/save", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-
-		formData := data[formKey]
-
-		client, err := mongo.Connect(ctx, clientOptions)
+		galleryId, err := widgetserver.AsUint64(data["objectId"])
 		if err != nil {
 			return "", "", nil, err
 		}
-		defer mongoclient.Disconnect(client, ctxLogger)
 
-		collection := client.Database(databaseName).Collection(collectionName)
+		service.UpdateImage(ctxLogger, galleryId, galleryservice.GalleryImage{}, nil)
 
 		// TODO
 
 		return "", "", nil, nil
 	})
 	w.AddAction("delete", pb.MethodKind_POST, "/delete/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+		ctxLogger := logger.Ctx(ctx)
+		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		service.DeleteImage(ctxLogger, imageId)
+
+		// TODO
+
 		return "", "", nil, nil
 	})
 }

@@ -30,6 +30,6 @@ type GalleryService interface {
 	GetImages(logger otelzap.LoggerWithCtx, galleryId uint64, start uint64, end uint64) (uint64, []GalleryImage, error)
 	GetImage(logger otelzap.LoggerWithCtx, imageId uint64) (GalleryImage, error)
 	GetImageData(logger otelzap.LoggerWithCtx, imageId uint64) ([]byte, error)
-	UpdateImage(logger otelzap.LoggerWithCtx, info GalleryImage, data []byte) (uint64, error)
+	UpdateImage(logger otelzap.LoggerWithCtx, galleryId uint64, info GalleryImage, data []byte) (uint64, error)
 	DeleteImage(logger otelzap.LoggerWithCtx, imageId uint64) error
 }
