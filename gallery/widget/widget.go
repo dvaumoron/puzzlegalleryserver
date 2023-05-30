@@ -82,8 +82,14 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 			return "", "", nil, err
 		}
 
+		baseUrl, err := ws.GetBaseUrl(2, data)
+		if err != nil {
+			return "", "", nil, err
+		}
+
 		newData := ws.Data{}
 		newData["Image"] = image
+		newData["BaseUrl"] = baseUrl
 		resData, err := json.Marshal(newData)
 		if err != nil {
 			return "", "", nil, err
