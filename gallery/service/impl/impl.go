@@ -173,7 +173,7 @@ func createImage(collection *mongo.Collection, ctx context.Context, image bson.M
 	var err error
 	var result bson.D
 GenerateImageIdStep:
-	err = collection.FindOne(ctx, bson.D{{Key: imageIdKey, Value: imageId}}, optsMaxImageId).Decode(&result)
+	err = collection.FindOne(ctx, bson.D{{Key: galleryIdKey, Value: image[galleryIdKey]}}, optsMaxImageId).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			goto CreateImageStep
