@@ -19,9 +19,12 @@ package main
 
 import (
 	_ "embed"
+	"os"
+	"strconv"
 
 	galleryimpl "github.com/dvaumoron/puzzlegalleryserver/gallery/service/impl"
 	gallerywidget "github.com/dvaumoron/puzzlegalleryserver/gallery/widget"
+	mongoclient "github.com/dvaumoron/puzzlemongoclient"
 	widgetserver "github.com/dvaumoron/puzzlewidgetserver"
 )
 
@@ -30,6 +33,14 @@ var version string
 
 func main() {
 	s := widgetserver.Make(gallerywidget.GalleryKey, version)
-	gallerywidget.InitWidget(s, galleryimpl.New())
+
+	defaultPageSize, _ := strconv.ParseUint(os.Getenv("PAGE_SIZE"), 10, 64)
+	if defaultPageSize == 0 {
+		defaultPageSize = 20
+	}
+
+	clientOptions, databaseName := mongoclient.Create()
+
+	gallerywidget.InitWidget(s, defaultPageSize, galleryimpl.New(clientOptions, databaseName))
 	s.Start()
 }

@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	github.com/dvaumoron/puzzlemongoclient v1.4.0
-	github.com/dvaumoron/puzzlewidgetserver v1.2.1
-	github.com/dvaumoron/puzzlewidgetservice v1.1.0
+	github.com/dvaumoron/puzzlewidgetserver v1.2.2
+	github.com/dvaumoron/puzzlewidgetservice v1.2.0
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.2.0
 	go.mongodb.org/mongo-driver v1.11.4
 )

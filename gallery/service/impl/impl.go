@@ -49,8 +49,7 @@ type galleryImpl struct {
 	databaseName  string
 }
 
-func New() service.GalleryService {
-	clientOptions, databaseName := mongoclient.Create()
+func New(clientOptions *options.ClientOptions, databaseName string) service.GalleryService {
 	return galleryImpl{clientOptions: clientOptions, databaseName: databaseName}
 }
 

@@ -31,28 +31,27 @@ const widgetName = "gallery"
 
 const formKey = "formData"
 
-func InitWidget(server ws.WidgetServer, service galleryservice.GalleryService) {
+func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service galleryservice.GalleryService) {
 	logger := server.Logger()
 	w := server.CreateWidget(widgetName)
 	w.AddAction("list", pb.MethodKind_GET, "/", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
+
+		pageNumber, start, end, _ := ws.GetPagination(defaultPageSize, data)
 
 		galleryId, err := ws.AsUint64(data["objectId"])
 		if err != nil {
 			return "", "", nil, err
 		}
 
-		// TODO paginate
-
-		total, images, err := service.GetImages(ctxLogger, galleryId, 0, 0)
+		total, images, err := service.GetImages(ctxLogger, galleryId, start, end)
 		if err != nil {
 			return "", "", nil, err
 		}
 
 		newData := ws.Data{}
-		data["Total"] = total
+		ws.InitPagination(newData, "", pageNumber, end, total)
 		newData["Images"] = images
-
 		resData, err := json.Marshal(newData)
 		if err != nil {
 			return "", "", nil, err
