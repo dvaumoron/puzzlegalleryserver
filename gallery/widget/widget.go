@@ -29,8 +29,6 @@ import (
 const GalleryKey = "puzzleGallery"
 const widgetName = "gallery"
 
-const formKey = "formData"
-
 func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service galleryservice.GalleryService) {
 	logger := server.Logger()
 	w := server.CreateWidget(widgetName)
@@ -98,7 +96,7 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 			return "", "", nil, err
 		}
 
-		formData, err := ws.AsMap(data[formKey])
+		formData, err := ws.GetFormData(data)
 		if err != nil {
 			return "", "", nil, err
 		}

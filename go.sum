@@ -68,6 +68,8 @@ github.com/dvaumoron/puzzlewidgetserver v1.2.1 h1:Pf6vAs5MRUsQ7vxwr/SD64AZ6xbMSZ
 github.com/dvaumoron/puzzlewidgetserver v1.2.1/go.mod h1:GV5Li0ovheEKLN3r4g8KEmV4e3Q1y6QQejvOGTEdXdo=
 github.com/dvaumoron/puzzlewidgetserver v1.2.2 h1:nsXU4NZwljtuFd7Ld0F2HmqxMYMvC0gu9T40R15Igek=
 github.com/dvaumoron/puzzlewidgetserver v1.2.2/go.mod h1:zjuGsQZjW17rsjOGouwnTrC0yF9PVuH5HRqlBbcZn60=
+github.com/dvaumoron/puzzlewidgetserver v1.2.3 h1:3CeGXQhYk3/9drr5ikWhYWQ+Yk6KXSG3i1/JzasBmT8=
+github.com/dvaumoron/puzzlewidgetserver v1.2.3/go.mod h1:zjuGsQZjW17rsjOGouwnTrC0yF9PVuH5HRqlBbcZn60=
 github.com/dvaumoron/puzzlewidgetservice v1.1.0 h1:qd5OPsfgK2N2+oAV9pcZdzv0ps2dvGHXWDAz+4MsXLo=
 github.com/dvaumoron/puzzlewidgetservice v1.1.0/go.mod h1:4SoELSrFGpUQOU1tnLa0wn+uoom19ZfBIrPZBQyr5dY=
 github.com/dvaumoron/puzzlewidgetservice v1.2.0 h1:emjrpOqV3o9vwU9+I3dg1jT4QegxM83B7/UOg47FiJE=
