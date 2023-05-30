@@ -22,8 +22,7 @@ import (
 	"encoding/json"
 
 	galleryservice "github.com/dvaumoron/puzzlegalleryserver/gallery/service"
-
-	widgetserver "github.com/dvaumoron/puzzlewidgetserver"
+	ws "github.com/dvaumoron/puzzlewidgetserver"
 	pb "github.com/dvaumoron/puzzlewidgetservice"
 )
 
@@ -32,23 +31,25 @@ const widgetName = "gallery"
 
 const formKey = "formData"
 
-func InitWidget(server widgetserver.WidgetServer, service galleryservice.GalleryService) {
+func InitWidget(server ws.WidgetServer, service galleryservice.GalleryService) {
 	logger := server.Logger()
 	w := server.CreateWidget(widgetName)
-	w.AddAction("view", pb.MethodKind_GET, "/", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+	w.AddAction("list", pb.MethodKind_GET, "/", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
 
-		galleryId, err := widgetserver.AsUint64(data["objectId"])
+		galleryId, err := ws.AsUint64(data["objectId"])
 		if err != nil {
 			return "", "", nil, err
 		}
+
+		// TODO paginate
 
 		total, images, err := service.GetImages(ctxLogger, galleryId, 0, 0)
 		if err != nil {
 			return "", "", nil, err
 		}
 
-		newData := widgetserver.Data{}
+		newData := ws.Data{}
 		data["Total"] = total
 		newData["Images"] = images
 
@@ -58,9 +59,9 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 		}
 		return "", "gallery/view", resData, nil
 	})
-	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data["pathData/ImageId"])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -71,9 +72,9 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 		}
 		return "", "", image, nil
 	})
-	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data["pathData/ImageId"])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -83,7 +84,7 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 			return "", "", nil, err
 		}
 
-		newData := widgetserver.Data{}
+		newData := ws.Data{}
 		newData["Image"] = image
 		resData, err := json.Marshal(newData)
 		if err != nil {
@@ -91,30 +92,70 @@ func InitWidget(server widgetserver.WidgetServer, service galleryservice.Gallery
 		}
 		return "", "gallery/edit", resData, nil
 	})
-	w.AddAction("save", pb.MethodKind_POST, "/save", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+	w.AddAction("save", pb.MethodKind_POST, "/save", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		galleryId, err := widgetserver.AsUint64(data["objectId"])
+		galleryId, err := ws.AsUint64(data["objectId"])
 		if err != nil {
 			return "", "", nil, err
 		}
 
-		service.UpdateImage(ctxLogger, galleryId, galleryservice.GalleryImage{}, nil)
+		formData, err := ws.AsMap(data[formKey])
+		if err != nil {
+			return "", "", nil, err
+		}
 
-		// TODO
+		imageId, err := ws.AsUint64(formData["ImageId"])
+		if err != nil {
+			return "", "", nil, err
+		}
 
-		return "", "", nil, nil
+		userId, err := ws.AsUint64(data["Id"])
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		title, err := ws.AsString(formData["Title"])
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		desc, err := ws.AsString(formData["Desc"])
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		imageInfo := galleryservice.GalleryImage{ImageId: imageId, UserId: userId, Title: title, Desc: desc}
+
+		files, err := ws.GetFiles(data)
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		if _, err = service.UpdateImage(ctxLogger, galleryId, imageInfo, files["image"]); err != nil {
+			return "", "", nil, err
+		}
+
+		listUrl, err := ws.GetBaseUrl(1, data)
+		if err != nil {
+			return "", "", nil, err
+		}
+		return listUrl, "", nil, nil
 	})
-	w.AddAction("delete", pb.MethodKind_POST, "/delete/:ImageId", func(ctx context.Context, data widgetserver.Data) (string, string, []byte, error) {
+	w.AddAction("delete", pb.MethodKind_POST, "/delete/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := widgetserver.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data["pathData/ImageId"])
 		if err != nil {
 			return "", "", nil, err
 		}
 
-		service.DeleteImage(ctxLogger, imageId)
+		if err = service.DeleteImage(ctxLogger, imageId); err != nil {
+			return "", "", nil, err
+		}
 
-		// TODO
-
-		return "", "", nil, nil
+		listUrl, err := ws.GetBaseUrl(2, data)
+		if err != nil {
+			return "", "", nil, err
+		}
+		return listUrl, "", nil, nil
 	})
 }
