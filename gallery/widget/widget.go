@@ -20,6 +20,7 @@ package widget
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	galleryservice "github.com/dvaumoron/puzzlegalleryserver/gallery/service"
 	ws "github.com/dvaumoron/puzzlewidgetserver"
@@ -96,17 +97,28 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 			return "", "", nil, err
 		}
 
+		listUrl, err := ws.GetBaseUrl(1, data)
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		userId, err := ws.AsUint64(data["Id"])
+		if err != nil {
+			return "", "", nil, err
+		}
+		if userId == 0 {
+			var targetBuilder strings.Builder
+			targetBuilder.WriteString(listUrl)
+			targetBuilder.WriteString("?error=ErrorNotAuthorized")
+			return targetBuilder.String(), "", nil, nil
+		}
+
 		formData, err := ws.GetFormData(data)
 		if err != nil {
 			return "", "", nil, err
 		}
 
 		imageId, err := ws.AsUint64(formData["ImageId"])
-		if err != nil {
-			return "", "", nil, err
-		}
-
-		userId, err := ws.AsUint64(data["Id"])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -129,11 +141,6 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 		}
 
 		if _, err = service.UpdateImage(ctxLogger, galleryId, imageInfo, files["image"]); err != nil {
-			return "", "", nil, err
-		}
-
-		listUrl, err := ws.GetBaseUrl(1, data)
-		if err != nil {
 			return "", "", nil, err
 		}
 		return listUrl, "", nil, nil

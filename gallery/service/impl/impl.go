@@ -142,7 +142,6 @@ func (i galleryImpl) UpdateImage(logger otelzap.LoggerWithCtx, galleryId uint64,
 	if imageId == 0 {
 		return createImage(collection, ctx, image)
 	}
-
 	return imageId, updateImage(collection, ctx, image)
 }
 
