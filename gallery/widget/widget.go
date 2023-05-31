@@ -28,10 +28,29 @@ import (
 )
 
 const GalleryKey = "puzzleGallery"
-const widgetName = "gallery"
+const GalleryName = "gallery"
 
-func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service galleryservice.GalleryService) {
+func InitWidget(server ws.WidgetServer, widgetName string, service galleryservice.GalleryService, defaultPageSize uint64, args ...string) {
 	logger := server.Logger()
+
+	viewTmpl := "gallery/view"
+	editTmpl := "gallery/edit"
+	switch len(args) {
+	default:
+		logger.Info("InitWidget should be called with 0 to 2 optional arguments.")
+		fallthrough
+	case 2:
+		if args[1] != "" {
+			editTmpl = args[1]
+		}
+		fallthrough
+	case 1:
+		if args[0] != "" {
+			viewTmpl = args[0]
+		}
+	case 0:
+	}
+
 	w := server.CreateWidget(widgetName)
 	w.AddAction("list", pb.MethodKind_GET, "/", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
@@ -55,7 +74,7 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 		if err != nil {
 			return "", "", nil, err
 		}
-		return "", "gallery/view", resData, nil
+		return "", viewTmpl, resData, nil
 	})
 	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
@@ -69,6 +88,20 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 			return "", "", nil, err
 		}
 		return "", "", image, nil
+	})
+	w.AddAction("create", pb.MethodKind_GET, "/create", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
+		baseUrl, err := ws.GetBaseUrl(1, data)
+		if err != nil {
+			return "", "", nil, err
+		}
+
+		newData := ws.Data{}
+		newData["BaseUrl"] = baseUrl
+		resData, err := json.Marshal(newData)
+		if err != nil {
+			return "", "", nil, err
+		}
+		return "", editTmpl, resData, nil
 	})
 	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
@@ -94,7 +127,7 @@ func InitWidget(server ws.WidgetServer, defaultPageSize uint64, service gallerys
 		if err != nil {
 			return "", "", nil, err
 		}
-		return "", "gallery/edit", resData, nil
+		return "", editTmpl, resData, nil
 	})
 	w.AddAction("save", pb.MethodKind_POST, "/save", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
