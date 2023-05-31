@@ -52,7 +52,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	}
 
 	w := server.CreateWidget(widgetName)
-	w.AddAction("list", pb.MethodKind_GET, "/", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
+	w.AddActionWithQuery("list", pb.MethodKind_GET, "/", ws.GetPaginationNames(), func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
 
 		pageNumber, start, end, _ := ws.GetPagination(defaultPageSize, data)
