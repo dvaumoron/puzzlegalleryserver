@@ -96,6 +96,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 		}
 
 		newData := ws.Data{}
+		newData["Image"] = galleryservice.GalleryImage{}
 		newData["BaseUrl"] = baseUrl
 		resData, err := json.Marshal(newData)
 		if err != nil {
