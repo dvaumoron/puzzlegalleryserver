@@ -169,6 +169,13 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 			return "", "", nil, err
 		}
 
+		if title == "new" {
+			var targetBuilder strings.Builder
+			targetBuilder.WriteString(listUrl)
+			targetBuilder.WriteString("?error=ErrorBadImageTitle")
+			return targetBuilder.String(), "", nil, nil
+		}
+
 		desc, err := ws.AsString(formData["Desc"])
 		if err != nil {
 			return "", "", nil, err
