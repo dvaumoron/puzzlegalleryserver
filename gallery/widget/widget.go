@@ -21,7 +21,6 @@ package widget
 import (
 	"context"
 	"encoding/json"
-	"strings"
 
 	galleryservice "github.com/dvaumoron/puzzlegalleryserver/gallery/service"
 	ws "github.com/dvaumoron/puzzlewidgetserver"
@@ -148,10 +147,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 			return "", "", nil, err
 		}
 		if userId == 0 {
-			var targetBuilder strings.Builder
-			targetBuilder.WriteString(listUrl)
-			targetBuilder.WriteString("?error=ErrorNotAuthorized")
-			return targetBuilder.String(), "", nil, nil
+			return listUrl + "?error=ErrorNotAuthorized", "", nil, nil
 		}
 
 		formData, err := ws.GetFormData(data)
@@ -169,11 +165,8 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 			return "", "", nil, err
 		}
 
-		if title == "new" {
-			var targetBuilder strings.Builder
-			targetBuilder.WriteString(listUrl)
-			targetBuilder.WriteString("?error=ErrorBadImageTitle")
-			return targetBuilder.String(), "", nil, nil
+		if title == "new" || title == "" {
+			return listUrl + "?error=ErrorBadImageTitle", "", nil, nil
 		}
 
 		desc, err := ws.AsString(formData["Desc"])
