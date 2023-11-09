@@ -27,8 +27,13 @@ import (
 	pb "github.com/dvaumoron/puzzlewidgetservice"
 )
 
-const GalleryKey = "puzzleGallery"
-const GalleryName = "gallery"
+const (
+	GalleryKey  = "puzzleGallery"
+	GalleryName = "gallery"
+
+	objectIdKey = "objectId"
+	imageIdKey  = "pathData/ImageId"
+)
 
 func InitWidget(server ws.WidgetServer, widgetName string, service galleryservice.GalleryService, defaultPageSize uint64, args ...string) {
 	logger := server.Logger()
@@ -57,7 +62,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 
 		pageNumber, start, end, _ := ws.GetPagination(defaultPageSize, data)
 
-		galleryId, err := ws.AsUint64(data["objectId"])
+		galleryId, err := ws.AsUint64(data[objectIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -78,7 +83,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data[imageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -106,7 +111,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data[imageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -132,7 +137,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("save", pb.MethodKind_POST, "/save", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		galleryId, err := ws.AsUint64(data["objectId"])
+		galleryId, err := ws.AsUint64(data[objectIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -188,7 +193,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("delete", pb.MethodKind_POST, "/delete/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data["pathData/ImageId"])
+		imageId, err := ws.AsUint64(data[imageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
