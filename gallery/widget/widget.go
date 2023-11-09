@@ -31,8 +31,11 @@ const (
 	GalleryKey  = "puzzleGallery"
 	GalleryName = "gallery"
 
-	objectIdKey = "objectId"
-	imageIdKey  = "pathData/ImageId"
+	objectIdKey    = "objectId"
+	baseUrlName    = "BaseUrl"
+	imageKey       = "Image"
+	imageIdKey     = "ImageId"
+	pathImageIdKey = "pathData/" + imageIdKey
 )
 
 func InitWidget(server ws.WidgetServer, widgetName string, service galleryservice.GalleryService, defaultPageSize uint64, args ...string) {
@@ -83,7 +86,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("retrieve", pb.MethodKind_RAW, "/retrieve/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data[imageIdKey])
+		imageId, err := ws.AsUint64(data[pathImageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -101,8 +104,8 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 		}
 
 		newData := ws.Data{}
-		newData["Image"] = galleryservice.GalleryImage{Title: "new"}
-		newData["BaseUrl"] = baseUrl
+		newData[imageKey] = galleryservice.GalleryImage{Title: "new"}
+		newData[baseUrlName] = baseUrl
 		resData, err := json.Marshal(newData)
 		if err != nil {
 			return "", "", nil, err
@@ -111,7 +114,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("edit", pb.MethodKind_GET, "/edit/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data[imageIdKey])
+		imageId, err := ws.AsUint64(data[pathImageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -127,8 +130,8 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 		}
 
 		newData := ws.Data{}
-		newData["Image"] = image
-		newData["BaseUrl"] = baseUrl
+		newData[imageKey] = image
+		newData[baseUrlName] = baseUrl
 		resData, err := json.Marshal(newData)
 		if err != nil {
 			return "", "", nil, err
@@ -160,7 +163,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 			return "", "", nil, err
 		}
 
-		imageId, err := ws.AsUint64(formData["ImageId"])
+		imageId, err := ws.AsUint64(formData[imageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
@@ -193,7 +196,7 @@ func InitWidget(server ws.WidgetServer, widgetName string, service galleryservic
 	})
 	w.AddAction("delete", pb.MethodKind_POST, "/delete/:ImageId", func(ctx context.Context, data ws.Data) (string, string, []byte, error) {
 		ctxLogger := logger.Ctx(ctx)
-		imageId, err := ws.AsUint64(data[imageIdKey])
+		imageId, err := ws.AsUint64(data[pathImageIdKey])
 		if err != nil {
 			return "", "", nil, err
 		}
